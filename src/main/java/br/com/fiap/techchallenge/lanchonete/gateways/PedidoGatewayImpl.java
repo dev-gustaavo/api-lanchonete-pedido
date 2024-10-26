@@ -7,6 +7,7 @@ import br.com.fiap.techchallenge.lanchonete.entities.Pedido;
 import br.com.fiap.techchallenge.lanchonete.entities.StatusPagamento;
 import br.com.fiap.techchallenge.lanchonete.entities.dbEntities.PedidoEntity;
 import br.com.fiap.techchallenge.lanchonete.interfaces.dbconnection.RepositoryPedido;
+import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.PedidoGateway;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
-public class PedidoGatewayImpl implements br.com.fiap.techchallenge.lanchonete.interfaces.gateways.PedidoGateway {
+public class PedidoGatewayImpl implements PedidoGateway {
 
     private final RepositoryPedido repositoryPedido;
     private final PedidoMapper pedidoMapper;

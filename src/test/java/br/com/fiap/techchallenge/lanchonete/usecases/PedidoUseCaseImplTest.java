@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.lanchonete.usecases;
 
+import br.com.fiap.techchallenge.lanchonete.LanchoneteApplication;
 import br.com.fiap.techchallenge.lanchonete.entities.Pedido;
 import br.com.fiap.techchallenge.lanchonete.entities.QrCode;
 import br.com.fiap.techchallenge.lanchonete.entities.StatusPagamento;
@@ -7,14 +8,17 @@ import br.com.fiap.techchallenge.lanchonete.entities.exception.ProdutoException;
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.MercadoPagoGateway;
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.PedidoGateway;
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.ProdutoGateway;
+import br.com.fiap.techchallenge.lanchonete.interfaces.usecases.ProdutoUseCase;
 import br.com.fiap.techchallenge.lanchonete.mocks.PedidoMock;
 import br.com.fiap.techchallenge.lanchonete.mocks.QrCodeMock;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Description;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
@@ -30,7 +34,7 @@ public class PedidoUseCaseImplTest {
     private PedidoGateway pedidoGateway;
 
     @Mock
-    private ProdutoGateway produtoGateway;
+    private ProdutoUseCase produtoUseCase;
 
     @Mock
     private MercadoPagoGateway mercadoPagoGateway;
@@ -49,14 +53,14 @@ public class PedidoUseCaseImplTest {
     @Test
     @Description("Deve cadastrar um pedido")
     void deveCadastrarUmPedido() throws Exception {
-        when(produtoGateway.isProduto(anyInt())).thenReturn(true);
+        when(produtoUseCase.isProduto(anyInt())).thenReturn(true);
         when(pedidoGateway.store(any())).thenReturn(pedidoMock);
         var qtdItens = pedidoMock.getProdutoId().size();
 
         var result = pedidoUseCase.store(pedidoMock);
         var item = result.getProdutoId().get(0);
 
-        verify(produtoGateway, times(qtdItens)).isProduto(anyInt());
+        verify(produtoUseCase, times(qtdItens)).isProduto(anyInt());
         verify(pedidoGateway, times(1)).store(any());
 
         assertAll(
@@ -74,30 +78,30 @@ public class PedidoUseCaseImplTest {
     void deveValidarListaProdutoVazia() throws Exception {
         assertThrows(ProdutoException.class, () -> pedidoUseCase.store(pedidoMockListaVazia));
 
-        verify(produtoGateway, times(0)).isProduto(anyInt());
+        verify(produtoUseCase, times(0)).isProduto(anyInt());
         verify(pedidoGateway, times(0)).store(any());
     }
 
     @Test
     @Description("Deve validar produto inexistente")
     void deveValidarProdutoInexistente() throws Exception {
-        when(produtoGateway.isProduto(anyInt())).thenReturn(false);
+        when(produtoUseCase.isProduto(anyInt())).thenReturn(false);
 
         assertThrows(ProdutoException.class, () -> pedidoUseCase.store(pedidoMock));
 
-        verify(produtoGateway, times(2)).isProduto(anyInt());
+        verify(produtoUseCase, times(2)).isProduto(anyInt());
         verify(pedidoGateway, times(0)).store(any());
     }
 
     @Test
     @Description("Deve retornar uma Exception ao tentar cadastrar um pedido")
     void deveRetornarExceptionAoTentarCadastrarPedido() throws Exception {
-        when(produtoGateway.isProduto(anyInt())).thenReturn(true);
+        when(produtoUseCase.isProduto(anyInt())).thenReturn(true);
         when(pedidoGateway.store(any())).thenThrow(new Exception());
 
         assertThrows(Exception.class, () -> pedidoUseCase.store(pedidoMock));
 
-        verify(produtoGateway, times(2)).isProduto(anyInt());
+        verify(produtoUseCase, times(2)).isProduto(anyInt());
         verify(pedidoGateway, times(1)).store(any());
     }
 

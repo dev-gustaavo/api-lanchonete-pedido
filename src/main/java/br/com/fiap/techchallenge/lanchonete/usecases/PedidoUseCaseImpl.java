@@ -9,6 +9,7 @@ import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.MercadoPagoGatew
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.PedidoGateway;
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.ProdutoGateway;
 import br.com.fiap.techchallenge.lanchonete.interfaces.usecases.PedidoUseCase;
+import br.com.fiap.techchallenge.lanchonete.interfaces.usecases.ProdutoUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ import java.util.Map;
 public class PedidoUseCaseImpl implements PedidoUseCase {
 
     private final PedidoGateway pedidoGateway;
-    private final ProdutoGateway produtoGateway;
+    private final ProdutoUseCase produtoUseCase;
     private final MercadoPagoGateway mercadoPagoGateway;
 
     @Override
@@ -45,9 +46,9 @@ public class PedidoUseCaseImpl implements PedidoUseCase {
         Map<Integer, Boolean> erro = new HashMap<>();
 
         idProdutos.forEach(id -> {
-            var existe = produtoGateway.isProduto(id);
+            var produto = produtoUseCase.isProduto(id);
 
-            if (!existe)
+            if (!produto)
                 erro.put(id, true);
         });
 

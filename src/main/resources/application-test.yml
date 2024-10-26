@@ -13,3 +13,7 @@ spring:
 
 server:
   port: 8080
+
+client:
+  produto:
+    url: 'http://localhost:5050/produto'

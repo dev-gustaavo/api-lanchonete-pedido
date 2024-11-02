@@ -1,12 +1,12 @@
 version: '3.8'
 services:
 
-  lanchonete_app:
+  lanchonete-pedido-app:
     build: .
-    container_name: lanchonete-app
-    image: gtbarbosa/fiap-tech-challenge-lanchonete:latest
+    container_name: lanchonete-app-pedido
+    image: gtbarbosa/fiap-tech-challenge-lanchonete-api-pedido:latest
     ports:
-      - 8080:8080
+      - 8181:8181
     networks:
       - lanchonete-network
     depends_on:
@@ -14,14 +14,14 @@ services:
 
   mysql-db:
     image: mysql:8
-    container_name: mysql-lanchonete-db
+    container_name: mysql-lanchonete-pedido-db
     ports:
       - 3307:3306
     networks:
       - lanchonete-network
     environment:
       MYSQL_ROOT_PASSWORD: pass
-      MYSQL_DATABASE: lanchonete
+      MYSQL_DATABASE: pedido
       MYSQL_USER: user
       MYSQL_PASSWORD: pass
     healthcheck:

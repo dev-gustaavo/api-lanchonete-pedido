@@ -4,10 +4,12 @@ import br.com.fiap.techchallenge.lanchonete.entities.MensagemErroPadrao;
 import br.com.fiap.techchallenge.lanchonete.entities.Pedido;
 import br.com.fiap.techchallenge.lanchonete.entities.QrCode;
 import br.com.fiap.techchallenge.lanchonete.entities.StatusPagamento;
+import br.com.fiap.techchallenge.lanchonete.entities.exception.ClienteException;
 import br.com.fiap.techchallenge.lanchonete.entities.exception.ProdutoException;
+import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.ClienteGateway;
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.MercadoPagoGateway;
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.PedidoGateway;
-import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.ProdutoGateway;
+import br.com.fiap.techchallenge.lanchonete.interfaces.usecases.ClienteUseCase;
 import br.com.fiap.techchallenge.lanchonete.interfaces.usecases.PedidoUseCase;
 import br.com.fiap.techchallenge.lanchonete.interfaces.usecases.ProdutoUseCase;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +26,39 @@ public class PedidoUseCaseImpl implements PedidoUseCase {
     private final PedidoGateway pedidoGateway;
     private final ProdutoUseCase produtoUseCase;
     private final MercadoPagoGateway mercadoPagoGateway;
+    private final ClienteUseCase clienteUseCase;
 
     @Override
     public Pedido store(Pedido pedido) throws Exception {
+        validaProdutosInformadosNoPedido(pedido);
+        validaClienteInformado(pedido);
+
+        try {
+            return pedidoGateway.store(pedido);
+        } catch (Exception exception) {
+            throw new Exception(MensagemErroPadrao.ERRO_GENERICO, exception);
+        }
+    }
+
+    private void validaClienteInformado(Pedido pedido) {
+        var erros = isClienteExistente(pedido.getIdentificacaoCliente());
+
+        if (!erros.isEmpty())
+            throw new ClienteException(MensagemErroPadrao.CLIENTE_NAO_ENCONTRADO);
+    }
+
+    private Map<String, Boolean> isClienteExistente(String cpf) {
+        Map<String, Boolean> erro = new HashMap<>();
+
+        var existe = clienteUseCase.isCliente(cpf);
+
+        if (!existe)
+            erro.put(cpf, true);
+
+        return erro;
+    }
+
+    private void validaProdutosInformadosNoPedido(Pedido pedido) {
         if (pedido.getProdutoId().isEmpty())
             throw new ProdutoException(MensagemErroPadrao.PRODUTO_PEDIDO_NAO_ENCONTRADO);
 
@@ -34,12 +66,6 @@ public class PedidoUseCaseImpl implements PedidoUseCase {
 
         if (!erros.isEmpty())
             throw new ProdutoException(MensagemErroPadrao.PRODUTO_PEDIDO_NAO_ENCONTRADO, erros);
-
-        try {
-            return pedidoGateway.store(pedido);
-        } catch (Exception exception) {
-            throw new Exception(MensagemErroPadrao.ERRO_GENERICO, exception);
-        }
     }
 
     private Map<Integer, Boolean> isProdutoExistente(List<Integer> idProdutos) {

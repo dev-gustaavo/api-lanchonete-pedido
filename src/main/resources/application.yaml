@@ -6,17 +6,19 @@ spring:
       ddl-auto: ${DDL_AUTO:create-drop}
     show-sql: ${SHOW_SQL:true}
   datasource:
-    url: ${URL_DATABASE:jdbc:mysql://localhost:3307/lanchonete}
+    url: ${URL_DATABASE:jdbc:mysql://mysql-db:3306/pedido}
     username: ${USER_DATABASE:user}
     password: ${PASSWORD_DATABASE:pass}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 server:
-  port: ${APP_PORT:8080}
+  port: ${APP_PORT:8181}
 
 env:
-  development: true
+  development: false
 
-client:
+feign:
   produto:
-    url: 'http://localhost:5050/produto'
+    url: ${PRODUTO_ENDPOINT:http://localhost:8080/produto}
+  cliente:
+    url: ${CLIENTE_ENDPOINT:http://localhost:8282/cliente}

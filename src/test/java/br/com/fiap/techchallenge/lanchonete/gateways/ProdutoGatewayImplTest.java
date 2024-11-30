@@ -2,6 +2,7 @@ package br.com.fiap.techchallenge.lanchonete.gateways;
 
 import br.com.fiap.techchallenge.lanchonete.client.ProdutoClient;
 import br.com.fiap.techchallenge.lanchonete.client.dto.ProdutoDTO;
+import br.com.fiap.techchallenge.lanchonete.entities.exception.ProdutoException;
 import br.com.fiap.techchallenge.lanchonete.mocks.ProdutoDTOMock;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,8 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -33,7 +33,7 @@ public class ProdutoGatewayImplTest {
     @Test
     @Description("Deve verificar se é um produto")
     void deveVerificarProduto() {
-        var responseEntityMock = ResponseEntity.ok(produtoDtoMock);
+        var responseEntityMock = produtoDtoMock;
         when(produtoClient.getProdutoById(anyInt())).thenReturn(responseEntityMock);
         assertNotNull(produtoGateway.isProduto(1));
     }
@@ -41,7 +41,8 @@ public class ProdutoGatewayImplTest {
     @Test
     @Description("Deve verificar que não é um produto")
     void deveVerificarQueNaoEhProduto() {
-        when(produtoClient.getProdutoById(anyInt())).thenReturn(ResponseEntity.ofNullable(null));
+        when(produtoClient.getProdutoById(anyInt())).thenReturn(null);
         assertNull(produtoGateway.isProduto(1));
+//        assertThrows(ProdutoException.class, () -> produtoGateway.isProduto(1));
     }
 }

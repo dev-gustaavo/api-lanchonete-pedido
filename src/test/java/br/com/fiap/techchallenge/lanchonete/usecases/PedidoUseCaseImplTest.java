@@ -8,6 +8,7 @@ import br.com.fiap.techchallenge.lanchonete.entities.exception.ProdutoException;
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.MercadoPagoGateway;
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.PedidoGateway;
 import br.com.fiap.techchallenge.lanchonete.interfaces.gateways.ProdutoGateway;
+import br.com.fiap.techchallenge.lanchonete.interfaces.usecases.ClienteUseCase;
 import br.com.fiap.techchallenge.lanchonete.interfaces.usecases.ProdutoUseCase;
 import br.com.fiap.techchallenge.lanchonete.mocks.PedidoMock;
 import br.com.fiap.techchallenge.lanchonete.mocks.QrCodeMock;
@@ -37,6 +38,9 @@ public class PedidoUseCaseImplTest {
     private ProdutoUseCase produtoUseCase;
 
     @Mock
+    private ClienteUseCase clienteUseCase;
+
+    @Mock
     private MercadoPagoGateway mercadoPagoGateway;
 
     @Mock
@@ -54,6 +58,7 @@ public class PedidoUseCaseImplTest {
     @Description("Deve cadastrar um pedido")
     void deveCadastrarUmPedido() throws Exception {
         when(produtoUseCase.isProduto(anyInt())).thenReturn(true);
+        when(clienteUseCase.isCliente(anyString())).thenReturn(true);
         when(pedidoGateway.store(any())).thenReturn(pedidoMock);
         var qtdItens = pedidoMock.getProdutoId().size();
 
@@ -97,6 +102,7 @@ public class PedidoUseCaseImplTest {
     @Description("Deve retornar uma Exception ao tentar cadastrar um pedido")
     void deveRetornarExceptionAoTentarCadastrarPedido() throws Exception {
         when(produtoUseCase.isProduto(anyInt())).thenReturn(true);
+        when(clienteUseCase.isCliente(anyString())).thenReturn(true);
         when(pedidoGateway.store(any())).thenThrow(new Exception());
 
         assertThrows(Exception.class, () -> pedidoUseCase.store(pedidoMock));

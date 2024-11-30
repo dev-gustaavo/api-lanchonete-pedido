@@ -19,6 +19,6 @@ env:
 
 feign:
   produto:
-    url: 'http://localhost:8080/produto'
+    url: ${PRODUTO_ENDPOINT:http://localhost:8080/produto}
   cliente:
-    url: 'http://localhost:8282/cliente'
+    url: ${CLIENTE_ENDPOINT:http://localhost:8282/cliente}

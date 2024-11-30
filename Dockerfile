@@ -25,4 +25,4 @@ RUN apt-get update && apt-get install -y curl \
 
 ENTRYPOINT ["/app/wait-for-it.sh", "mysql-db:3306", "--", "java", "-jar", "/app/lanchonete-pedido-app.jar"]
 
-EXPOSE 8181
+EXPOSE 80

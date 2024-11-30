@@ -6,7 +6,7 @@ services:
     container_name: lanchonete-app-pedido
     image: gtbarbosa/fiap-tech-challenge-lanchonete-api-pedido:latest
     ports:
-      - 8181:8181
+      - 8080:8080
     networks:
       - lanchonete-network
     depends_on:
